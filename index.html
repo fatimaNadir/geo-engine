@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GEO Engine - AI Search Visibility & Schema Audit</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans">
+  <div class="max-w-5xl mx-auto px-4 py-10">
+    <!-- Header -->
+    <header class="text-center mb-10">
+      <h1 class="text-4xl font-extrabold text-indigo-400 mb-2">GEO Visibility Audit Engine</h1>
+      <p class="text-slate-400">Analyze your site for Perplexity, Claude, ChatGPT Search & Gemini citations.</p>
+    </header>
+
+    <!-- Audit Input Box -->
+    <div class="bg-slate-800 border border-slate-700 rounded-xl p-6 mb-8 shadow-xl">
+      <label class="block text-sm font-medium mb-2 text-slate-300">Paste Web Page Content / Raw HTML</label>
+      <textarea id="rawContent" rows="6" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm focus:outline-none focus:border-indigo-500 font-mono" placeholder="Paste your page HTML or semantic text here..."></textarea>
+      <button onclick="runGEOAudit()" class="mt-4 w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 rounded-lg transition shadow-lg">
+        Run AI Search Audit
+      </button>
+    </div>
+
+    <!-- Output Dashboard -->
+    <div id="results" class="hidden space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 text-center">
+          <span class="text-xs font-uppercase tracking-wider text-slate-400">GEO Score</span>
+          <div id="geoScore" class="text-4xl font-bold text-emerald-400 mt-2">0/100</div>
+        </div>
+        <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 text-center">
+          <span class="text-xs font-uppercase tracking-wider text-slate-400">Semantic Schema</span>
+          <div id="schemaStatus" class="text-lg font-bold text-amber-400 mt-3">Checking...</div>
+        </div>
+        <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 text-center">
+          <span class="text-xs font-uppercase tracking-wider text-slate-400">LLM Citation Potential</span>
+          <div id="citationStatus" class="text-lg font-bold text-indigo-400 mt-3">High</div>
+        </div>
+      </div>
+
+      <!-- Actionable Checklist -->
+      <div class="bg-slate-800 border border-slate-700 rounded-xl p-6">
+        <h3 class="text-lg font-bold text-white mb-4">AI Search Optimization Checklist</h3>
+        <ul id="auditList" class="space-y-3 text-sm"></ul>
+      </div>
+
+      <!-- Pro Feature Hook -->
+      <div class="bg-gradient-to-r from-indigo-900 to-slate-800 border border-indigo-500/30 rounded-xl p-6 text-center">
+        <h4 class="text-xl font-bold text-white mb-2">Unlock Pro GEO Export & Auto Schema Generator</h4>
+        <p class="text-slate-300 text-sm mb-4">Get exact JSON-LD injection code for ChatGPT Search & full competitor breakdown.</p>
+        <button class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-6 py-2.5 rounded-lg shadow-lg">
+          Get Pro Access on Gumroad ($39)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function runGEOAudit() {
+      const input = document.getElementById('rawContent').value;
+      if (!input) return alert('Please paste HTML content first.');
+
+      let score = 30;
+      const auditList = document.getElementById('auditList');
+      auditList.innerHTML = '';
+
+      // Check Schema
+      const hasSchema = input.includes('application/ld+json');
+      if (hasSchema) {
+        score += 35;
+        auditList.innerHTML += `<li class="text-emerald-400">✓ Structured Data (JSON-LD) detected.</li>`;
+      } else {
+        auditList.innerHTML += `<li class="text-rose-400">✗ Missing JSON-LD Schema (LLMs struggle to parse entity relationship).</li>`;
+      }
+
+      // Check Headings
+      const hasHeadings = input.includes('<h1') || input.includes('<h2');
+      if (hasHeadings) {
+        score += 20;
+        auditList.innerHTML += `<li class="text-emerald-400">✓ Clear semantic headings found.</li>`;
+      } else {
+        auditList.innerHTML += `<li class="text-rose-400">✗ Missing HTML5 heading hierarchy (H1/H2).</li>`;
+      }
+
+      // Check Direct Answers / Definition lists
+      if (input.includes('<dl') || input.includes('<table') || input.includes('<ul')) {
+        score += 15;
+        auditList.innerHTML += `<li class="text-emerald-400">✓ Fact-dense tables or lists present (Ideal for RAG extraction).</li>`;
+      }
+
+      document.getElementById('geoScore').innerText = `${score}/100`;
+      document.getElementById('schemaStatus').innerText = hasSchema ? 'Valid' : 'Missing';
+      document.getElementById('results').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
